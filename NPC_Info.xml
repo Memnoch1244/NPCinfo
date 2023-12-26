@@ -31,7 +31,7 @@ require "tprint"
 
 
 my_window = ThemedTextWindow(
-   GetPluginID(),                    -- string, required, a unique identifier for this window
+   GetPluginID(),  -- string, required, a unique identifier for this window
    0,  -- integer, required, where to put it if the player hasn't moved it
    0,  -- integer, required, where to put it if the player hasn't moved it
    400,  -- integer, required, how big to make it if the player hasn't moved it
@@ -58,9 +58,7 @@ my_window = ThemedTextWindow(
 
 ]]>
 
-
 function SetTitle(name, line, wildcards, styles)
---  my_window.title = GetTriggerWildcard("capture_room_title", "room")
   my_window:dress_window(GetTriggerWildcard("capture_room_title", "room"))
   Note(GetTriggerWildcard("capture_room_title", "room"))
 end
@@ -68,84 +66,179 @@ end
 function chars_start()
   mob_count_here = 0
   mob_list = {}
-  EnableTrigger("room_chars", true)
+  EnableTrigger("room_chars_trigger", true)
+--  Note("Chars_Start")
 end
 
 function room_chars(name, line, wildcards, styles)
   mob_count_here = mob_count_here + 1
   mob_list [#mob_list + 1] = wildcards.char_name
+--  Note("Room_Chars Added")
 end
 
-function chars_end()
-  EnableTrigger("room_chars", false)
---  Note("Detected ", mob_count_here, string.format(" mob%s in this room", mob_count_here == 1 and "" or "s"))
+function chars_end(name, line, wildcards, styles)
 --  tprint(mob_list)
   my_window:clear()
   for i = 1, #mob_list do
   my_window:add_text(mob_list[i], draw_after)
   end
+  EnableTrigger("room_chars_trigger", false)
+  EnableTriggerGroup("refresh_mobs", false)
+end
+
+
+
+
+function trigger_damage_done(name, line, wildcards)
+  last_mob_damaged = Trim(wildcards.mob_name)
 end
 
 function trigger_receive_xp()
-    if last_mob_damaged then
-        last_mob_killed = last_mob_damaged
-    else
-        -- do nothing
-    end
-    Note(last_mob_killed)
-    last_mob_damaged = nil
+  EnableTrigger("squelch_tags", true)
+  EnableTriggerGroup("kill_look", true)
+  EnableTriggerGroup("look_room", false)
+  pcall("set_tags")
+  SendNoEcho("look")
 end
 
-function trigger_damage_done(name, line, wildcards)
-    last_mob_damaged = Trim(wildcards.mob_name)
+function set_tags()
+  SendNoEcho("tags roomdescs on")
+--  SendNoEcho("tags exits on")
+  SendNoEcho("tags roomobjs on")
+  SendNoEcho("tags roomchars on")
+end
+
+function kill_start()
+  mob_count_here = 0
+  mob_list = {}
+  EnableTrigger("kill_chars_trigger", true)
+end
+
+function kill_chars(name, line, wildcards, styles)
+  mob_count_here = mob_count_here + 1
+  mob_list [#mob_list + 1] = wildcards.char_name
+--  Note("Kill_Chars Added")
+end
+
+function kill_end(name, line, wildcards, styles)
+--  tprint(mob_list)
+  my_window:clear()
+  for i = 1, #mob_list do
+  my_window:add_text(mob_list[i], draw_after)
+  end
+  EnableTrigger("kill_chars_trigger", false)
+  EnableTriggerGroup("look_room", true)
+  EnableTriggerGroup("kill_look", false)
+end
+
+function squelch_info(name, line, wildcards, styles)
+  EnableTrigger("squelch_look", true)
+end
+
+function stop_squelch(name, line, wildcards, styles)
+  EnableTrigger("squelch_look", false)
+end
+
+
+
+
+function save_tag_state(name, line, wildcards)
+  tag_list [#tag_list + 1] = Trim(wildcards.tag_status)
+--  Note(wildcards.tag_status)
+end
+
+function tags_start(name, line, wildcards)
+  EnableTrigger("tags_omit", true)
+end
+
+function tags_end(name, line, wildcards)
+  EnableTriggerGroup("tags_save", false)
+  EnableTrigger("tags_omit", false)
+--  tprint(tag_list)
+  Note("NPC Info loading complete.")
 end
 
 function OnPluginEnable()
-   SendNoEcho("tags roomchars on")
-   SendNoEcho("tags roomnames on")
+  Note("Getting TAGS status...")
+  tag_list = {}
+  SendNoEcho("tags roomchars on")
+  SendNoEcho("tags roomnames on")
+  EnableTriggerGroup("tags_save", true)
+  SendNoEcho("tags")
 end
 
 function OnPluginInstall()
-   SendNoEcho("tags roomchars on")
-   SendNoEcho("tags roomnames on")
+  Note("Getting TAGS status...")
+  tag_list = {}
+  SendNoEcho("tags roomchars on")
+  SendNoEcho("tags roomnames on")
+  EnableTriggerGroup("tags_save", true)
+  SendNoEcho("tags")
 end
 
 </script>
 
 
 
+
 <triggers>
+
+
+<!-- Look and Move Group look_room -->
 
 <trigger
   name="capture_room_title"
   enabled="y"
+  group="look_room"
   keep_evaluating="y"
   match="^\{rname\}(?P<room>.*)"
   regexp="y"
   omit_from_output="y"
   send_to="12"
   script="SetTitle"
-  sequence="0"
+  sequence="50"
   >
+</trigger>
+
+<trigger 
+  match="{roomobjs}"
+  group="look_room"
+  enabled="y" 
+  regexp="n" 
+  sequence="100" 
+  omit_from_output="y" 
+  > 
+</trigger>
+
+<trigger 
+  match="{/roomobjs}"
+  group="look_room"
+  enabled="y" 
+  regexp="n" 
+  sequence="100" 
+  omit_from_output="y" 
+  > 
 </trigger>
 
 <trigger 
   match="{roomchars}"
   script="chars_start"
+  group="look_room"
   enabled="y" 
   regexp="n" 
   sequence="50" 
-  omit_from_output="n" 
+  omit_from_output="y" 
   send_to="12" 
   > 
 </trigger>
 
-<trigger match="{/roomchars}"
+<trigger match="*{/roomchars}*"
   script="chars_end"
+  group="look_room"
   enabled="y" 
   regexp="n" 
   sequence="50" 
-  omit_from_output="n" 
+  omit_from_output="y" 
   send_to="12" 
   > 
 </trigger>
@@ -153,14 +246,162 @@ end
 <trigger 
   match="^(?P<char_name>.+)$"
   script="room_chars" 
-  name="room_chars"
+  name="room_chars_trigger"
   enabled="n" 
   regexp="y" 
-  sequence="100" 
+  sequence="50" 
   omit_from_output="n" 
   send_to="12" 
   > 
 </trigger>
+
+
+<!-- On Kill Group kill_look -->
+
+<trigger
+  name="kill_room_title"
+  enabled="n"
+  group="kill_look"
+  keep_evaluating="y"
+  match="{rname}*"
+  regexp="n"
+  omit_from_output="y"
+  send_to="12"
+  script="squelch_info"
+  sequence="50"
+  >
+</trigger>
+
+<trigger
+  name="stop_squelch"
+  enabled="n"
+  group="kill_look"
+  keep_evaluating="y"
+  match="*{/roomobjs}*"
+  regexp="n"
+  omit_from_output="y"
+  send_to="12"
+  script="stop_squelch"
+  sequence="50"
+  >
+</trigger>
+
+<trigger 
+  match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON)$"
+  name="squelch_tags"
+  enabled="n" 
+  regexp="y" 
+  sequence="100" 
+  omit_from_output="y" 
+  > 
+</trigger>
+
+<trigger 
+  match="*"
+  name="squelch_look"
+  enabled="n" 
+  regexp="n" 
+  sequence="100" 
+  omit_from_output="y" 
+  > 
+</trigger>
+
+<trigger 
+  match="{roomchars}"
+  script="kill_start"
+  group="kill_look"
+  enabled="n" 
+  regexp="n" 
+  sequence="50" 
+  omit_from_output="y" 
+  send_to="12" 
+  > 
+</trigger>
+
+<trigger match="*{/roomchars}*"
+  script="kill_end"
+  group="kill_look"
+  enabled="n" 
+  regexp="n" 
+  sequence="50" 
+  omit_from_output="y" 
+  send_to="12" 
+  > 
+</trigger>
+
+<trigger 
+  match="^(?P<char_name>.+)$"
+  script="kill_chars" 
+  name="kill_chars_trigger"
+  enabled="n" 
+  regexp="y" 
+  sequence="50" 
+  omit_from_output="y" 
+  send_to="12" 
+  > 
+</trigger>
+
+
+
+<!-- Tag Logging in Development -->
+
+<trigger 
+  match="*"
+  group="tags_save"
+  enabled="n" 
+  regexp="n" 
+  sequence="100" 
+  omit_from_output="y" 
+  > 
+</trigger>
+
+<trigger match="NOTE: GMCP session tags option is *"
+  script="tags_end"
+  enabled="n" 
+  group="tags_save"
+  regexp="n" 
+  sequence="50" 
+  omit_from_output="y" 
+  send_to="12" 
+  > 
+</trigger>
+
+<trigger 
+  match="^EXITS         Display tags around autoexits: {exits}                  (?P<tag_status>.*)$"
+  script="save_tag_state" 
+  group="tags_save"
+  enabled="n" 
+  regexp="y" 
+  sequence="75" 
+  omit_from_output="y" 
+  send_to="12" 
+  >
+</trigger>
+
+<trigger 
+  match="^ROOMDESCS     Display tags around descs {rdesc}                       (?P<tag_status>.*)$"
+  script="save_tag_state" 
+  enabled="n" 
+  regexp="y"
+  group="tags_save" 
+  sequence="75" 
+  omit_from_output="y" 
+  send_to="12" 
+  >
+</trigger>
+
+<trigger 
+  match="^ROOMCHARS     Display tags around characters in a room.               (?P<tag_status>.*)$"
+  script="save_tag_state" 
+  group="tags_save"
+  enabled="n" 
+  regexp="y" 
+  sequence="75" 
+  omit_from_output="y" 
+  send_to="12" 
+  >
+</trigger>
+
 
 	<trigger match="^You (?:don't )?receive \d+(?:\+\d+)* experience points?\."
 		script="trigger_receive_xp" ignore_case="y" enabled="y" regexp="y" sequence="1" keep_evaluating="y" omit_from_output="n" > </trigger>
