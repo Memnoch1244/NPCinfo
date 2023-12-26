@@ -61,8 +61,8 @@ my_window = ThemedTextWindow(
 
 function SetTitle(name, line, wildcards, styles)
 --  my_window.title = GetTriggerWildcard("capture_room_title", "room")
-  my_window:dress_window(new_title)
-  Note(my_window.title)
+  my_window:dress_window(GetTriggerWildcard("capture_room_title", "room"))
+  Note(GetTriggerWildcard("capture_room_title", "room"))
 end
 
 function chars_start()
