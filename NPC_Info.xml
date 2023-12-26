@@ -60,8 +60,8 @@ my_window = ThemedTextWindow(
 
 
 function SetTitle(name, line, wildcards, styles)
-  my_window.title = GetTriggerWildcard("capture_room_title", "room")
-  my_window:dress_window()
+--  my_window.title = GetTriggerWildcard("capture_room_title", "room")
+  my_window:dress_window(new_title)
   Note(my_window.title)
 end
 
@@ -102,10 +102,12 @@ end
 
 function OnPluginEnable()
    SendNoEcho("tags roomchars on")
+   SendNoEcho("tags roomnames on")
 end
 
 function OnPluginInstall()
    SendNoEcho("tags roomchars on")
+   SendNoEcho("tags roomnames on")
 end
 
 </script>
@@ -123,7 +125,7 @@ end
   omit_from_output="y"
   send_to="12"
   script="SetTitle"
-  sequence="50"
+  sequence="0"
   >
 </trigger>
 
