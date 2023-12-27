@@ -57,7 +57,7 @@ my_window = ThemedTextWindow(
 
 ]]>
 
-<!-- Look and Move Group look_room -->
+<!-- Look and Player Move Functions -->
 
 function SetTitle(name, line, wildcards, styles)
   EnableTriggerGroup("move_group", false)
@@ -82,12 +82,10 @@ function room_chars(name, line, wildcards, styles)
   if not string.find(wildcards.char_name, "(Player)", 1, true) then
     mob_count_here = mob_count_here + 1
     table.insert(line_styles,styles)
---  Note("Room_Chars Added")
   end
 end
 
 function chars_end(name, line, wildcards, styles)
---  tprint(line_styles)
   my_window:clear()
   for i = 1, #line_styles do
 	my_window:add_text(line_styles[i], draw_after)
@@ -98,7 +96,7 @@ function chars_end(name, line, wildcards, styles)
 end
 
 
-<!-- On Kill Group kill_look -->
+<!-- On Kill or NPC Move Functions -->
 
 function trigger_npc_move()
   EnableTrigger("squelch_tags", true)
@@ -126,7 +124,6 @@ function kill_chars(name, line, wildcards, styles)
   if not string.find(wildcards.char_name, "(Player)", 1, true) then
     mob_count_here = mob_count_here + 1
     table.insert(line_styles,styles)
---  Note("Room_Chars Added")
   end
 end
 
@@ -149,12 +146,11 @@ function stop_squelch(name, line, wildcards, styles)
   EnableTrigger("squelch_look", false)
 end
 
+<!-- Other Functions -->
 
 function OnPluginEnable()
   Note("Plugin NPC Info enabled.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
-  Note("To Do.  Add NPC moving in and out of room.  Shorten NPC flags.")
---  tag_list = {}
---  SendNoEcho("tags")
+  Note("To Do.  Shorten NPC flags.")
 end
 
 function OnPluginInstall()
@@ -163,16 +159,6 @@ function OnPluginInstall()
   SendNoEcho("tags roomnames on")
   SendNoEcho("tags roomdescs on")
   SendNoEcho("tags roomobjs on")
-end
-
-
-function OnPluginClose()
-  Note("Plugin NPC Info closed.")
-   OnPluginDisable()
-end
-
-function OnPluginDisable ()
-  Note("Plugin NPC Info disabled.")
 end
 
 function window_show()
@@ -186,223 +172,84 @@ end
 </script>
 
 
-
+<!-- Triggers -->
 
 <triggers>
 
+<!-- Look and Player Move Triggers -->
 
-<!-- Look and Move Trigger Group look_room -->
-
-<trigger
-  name="capture_room_title"
-  enabled="y"
-  group="look_room"
-  keep_evaluating="y"
-  match="^\{rname\}(?P<room>.*)"
-  regexp="y"
-  omit_from_output="y"
-  send_to="12"
-  script="SetTitle"
-  sequence="50"
-  >
+<trigger match="^\{rname\}(?P<room>.*)"
+    script="SetTitle"  name="capture_room_title"  group="look_room"  enabled="y"  keep_evaluating="y"  regexp="y"  omit_from_output="y"  send_to="12"  sequence="50"  >
 </trigger>
 
-<trigger 
-  match="{roomobjs}"
-  group="look_room"
-  enabled="y" 
-  regexp="n" 
-  sequence="100" 
-  omit_from_output="y" 
-  > 
+<trigger match="{roomobjs}"
+    group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   sequence="100"   > 
 </trigger>
 
-<trigger 
-  match="{/roomobjs}"
-  group="look_room"
-  enabled="y" 
-  regexp="n" 
-  sequence="100" 
-  omit_from_output="y" 
-  > 
+<trigger match="{/roomobjs}"
+    group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   sequence="100"   > 
 </trigger>
 
-<trigger 
-  match="{roomchars}"
-  script="chars_start"
-  group="look_room"
-  enabled="y" 
-  regexp="n" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
-  > 
+<trigger match="{roomchars}"
+    script="chars_start"  group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="50"   > 
 </trigger>
 
 <trigger match="*{/roomchars}*"
-  script="chars_end"
-  group="look_room"
-  enabled="y" 
-  regexp="n" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
-  > 
+    script="chars_end"  group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="50"   > 
 </trigger>
 
-<trigger 
-  match="^(?P<char_name>.+)$"
-  script="room_chars" 
-  name="room_chars_trigger"
-  enabled="n" 
-  regexp="y" 
-  sequence="50" 
-  omit_from_output="n" 
-  send_to="12" 
-  > 
+<trigger match="^(?P<char_name>.+)$"
+    script="room_chars"   name="room_chars_trigger"  enabled="n"   regexp="y"   omit_from_output="n"   send_to="12"   sequence="50"   > 
 </trigger>
 
 
-<!-- On Kill or Move Trigger Group kill_look -->
+<!-- On Kill or NPC Move Triggers -->
 
-<trigger
-  name="kill_room_title"
-  enabled="n"
-  group="kill_look"
-  keep_evaluating="y"
-  match="{rname}*"
-  regexp="n"
-  omit_from_output="y"
-  send_to="12"
-  script="squelch_info"
-  sequence="50"
-  >
+<trigger match="^You (?:don't )?receive \d+(?:\+\d+)* experience points?\."
+    script="trigger_receive_xp"   ignore_case="y"   enabled="y"   regexp="y"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
-<trigger
-  name="stop_squelch"
-  enabled="n"
-  group="kill_look"
-  keep_evaluating="y"
-  match="*{/roomobjs}*"
-  regexp="n"
-  omit_from_output="y"
-  send_to="12"
-  script="stop_squelch"
-  sequence="50"
-  >
+<trigger match="{rname}*"
+    script="squelch_info"  name="kill_room_title"  group="kill_look"  enabled="n"  keep_evaluating="y"  regexp="n"  omit_from_output="y"  send_to="12"  sequence="50"  >
 </trigger>
 
-<trigger 
-  match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON|Tag option roomnames turned ON)$"
-  name="squelch_tags"
-  enabled="y" 
-  regexp="y" 
-  sequence="100" 
-  omit_from_output="y" 
-  > 
+<trigger match="*"
+    name="squelch_look"  enabled="n"   regexp="n"   omit_from_output="y"   sequence="100"   > 
 </trigger>
 
-<trigger 
-  match="*"
-  name="squelch_look"
-  enabled="n" 
-  regexp="n" 
-  sequence="100" 
-  omit_from_output="y" 
-  > 
+<trigger match="*{/roomobjs}*"
+    script="stop_squelch"  name="stop_squelch"  enabled="n"  group="kill_look"  keep_evaluating="y"  regexp="n"  omit_from_output="y"  send_to="12"  sequence="50"  >
 </trigger>
 
-<trigger 
-  match="{roomchars}"
-  script="kill_start"
-  group="kill_look"
-  enabled="n" 
-  regexp="n" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
-  > 
+<trigger match="{roomchars}"
+    script="kill_start"  group="kill_look"  enabled="n"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="50"   > 
+</trigger>
+
+<trigger match="^(?P<char_name>.+)$"
+    script="kill_chars"   name="kill_chars_trigger"  enabled="n"   regexp="y"   omit_from_output="y"   send_to="12"   sequence="50"   > 
 </trigger>
 
 <trigger match="*{/roomchars}*"
-  script="kill_end"
-  group="kill_look"
-  enabled="n" 
-  regexp="n" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
-  > 
+    script="kill_end"  group="kill_look"  enabled="n"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="50"   > 
 </trigger>
 
-<trigger 
-  match="^(?P<char_name>.+)$"
-  script="kill_chars" 
-  name="kill_chars_trigger"
-  enabled="n" 
-  regexp="y" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
-  > 
+
+<!-- Generic Movement Triggers -->
+ 
+<trigger match="^(.*?) (leaves|moves|wanders|marches|flits|sloshes|slinks|crashes) (.*?)\.$"
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
 </trigger>
 
-<trigger 
-  match="^You (?:don't )?receive \d+(?:\+\d+)* experience points?\."
-  script="trigger_receive_xp" 
-  ignore_case="y" 
-  enabled="y" 
-  regexp="y" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
-
-<!-- Movement Triggers -->
- 
-<trigger match="* arrives from the *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* in from the *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* leaves *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* moves *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* wanders *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* marches *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
- 
-<trigger match="* strolls *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+<trigger match="^(.*?) (pads|canters|flies|hops|strolls|trudges|charges|advances|dawdles) (.*?)\.$"
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
 </trigger>
 
-<trigger match="* trudges *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+<trigger match="^(.*?) (waddles|rambles|moseys|ambles|bounds|flutters|arrives|appears) (.*?)\.$"
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
 </trigger>
 
-<trigger match="* charges *"
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
 
-<trigger match="* advances *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
-</trigger>
-
-<!-- Kobold Siege Camp Custom Movements -->
+<!-- Kobold Siege Camp Custom Movement Triggers -->
 
 <trigger match="* comes charging *."
     script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
@@ -432,35 +279,30 @@ end
     script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
 </trigger>
 
+
+<!-- Other Triggers -->
+
+<trigger match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON|Tag option roomnames turned ON)$"
+    name="squelch_tags"  enabled="y"   regexp="y"   sequence="100"   omit_from_output="y"   > 
+</trigger>
+
 </triggers>
 
 
+<!-- Aliases -->
 
 <aliases>
 
-<alias
-  match="npcshow"
-  regexp="n"
-  enabled="y"
-  sequence="100"
-  ignore_case="y"
-  send_to="12"
-  script="window_show"
-  >
+<alias match="^npcshow$"
+    script="window_show"  regexp="y"  enabled="y"  sequence="100"  ignore_case="y"  send_to="12"  >
 </alias>
 
-<alias
-  match="npchide"
-  regexp="n"
-  enabled="y"
-  sequence="100"
-  ignore_case="y"
-  send_to="12"
-  script="window_hide"
-  >
+<alias match="^npchide$"
+    script="window_hide"  regexp="y"  enabled="y"  sequence="100"  ignore_case="y"  send_to="12"  >
 </alias>
-
 
 </aliases>
+
+
 
 </muclient>
