@@ -359,84 +359,78 @@ end
   omit_from_output="n" 
   > 
  </trigger>
+
+<!-- Movement Triggers -->
  
- <trigger 
-  match="* arrives from the *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* arrives from the *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
  
-  <trigger 
-  match="* in from the *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* in from the *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
  
-   <trigger 
-  match="* leaves *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* leaves *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
  
- <trigger 
-  match="* moves *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* moves *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
  
- <trigger 
-  match="* wanders *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* wanders *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
  
-<trigger 
-  match="* marches *."
-  script="trigger_npc_move" 
-  group="move_group"
-  ignore_case="y" 
-  enabled="y" 
-  regexp="n" 
-  sequence="1" 
-  keep_evaluating="y" 
-  omit_from_output="n" 
-  > 
- </trigger>
+<trigger match="* marches *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+ 
+<trigger match="* strolls *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* trudges *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* charges *"
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* advances *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<!-- Kobold Siege Camp Custom Movements -->
+
+<trigger match="* comes charging *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* has joined in the siege."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* continues advancing *."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* is ready for some action."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* has joined in the siege."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* already charging the castle."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="* joins the fray."
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
 
 </triggers>
 
