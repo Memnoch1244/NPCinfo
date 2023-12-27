@@ -60,6 +60,7 @@ my_window = ThemedTextWindow(
 <!-- Look and Move Group look_room -->
 
 function SetTitle(name, line, wildcards, styles)
+  EnableTriggerGroup("move_group", false)
   title_styles = {styles}
   table.remove(title_styles[1], 1)
   my_window:dress_window(title_styles)
@@ -93,16 +94,25 @@ function chars_end(name, line, wildcards, styles)
   end
   EnableTrigger("room_chars_trigger", false)
   EnableTriggerGroup("refresh_mobs", false)
+  EnableTriggerGroup("move_group", true)
 end
 
 
 <!-- On Kill Group kill_look -->
 
+function trigger_npc_move()
+  EnableTrigger("squelch_tags", true)
+  EnableTriggerGroup("kill_look", true)
+  EnableTriggerGroup("look_room", false)
+  EnableTriggerGroup("move_group", false)
+  SendNoEcho("look")
+end
 
 function trigger_receive_xp()
   EnableTrigger("squelch_tags", true)
   EnableTriggerGroup("kill_look", true)
   EnableTriggerGroup("look_room", false)
+  EnableTriggerGroup("move_group", false)
   SendNoEcho("look")
 end
 
@@ -128,6 +138,7 @@ function kill_end(name, line, wildcards, styles)
   EnableTrigger("kill_chars_trigger", false)
   EnableTriggerGroup("look_room", true)
   EnableTriggerGroup("kill_look", false)
+  EnableTriggerGroup("move_group", true)
 end
 
 function squelch_info(name, line, wildcards, styles)
@@ -139,44 +150,29 @@ function stop_squelch(name, line, wildcards, styles)
 end
 
 
-<!-- Tag Logging in Development -->
-
-function save_tag_state(name, line, wildcards)
-  tag_list [#tag_list + 1] = Trim(wildcards.tag_status)
---  Note(wildcards.tag_status)
-end
-
-function tags_start(name, line, wildcards)
-  EnableTrigger("tags_omit", true)
-end
-
-function tags_end(name, line, wildcards)
-  EnableTriggerGroup("tags_save", false)
-  EnableTrigger("tags_omit", false)
---  tprint(tag_list)
-  Note("NPC Info loading complete.")
-end
-
 function OnPluginEnable()
-  Note("Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
-  tag_list = {}
-  SendNoEcho("tags roomchars on")
-  SendNoEcho("tags roomnames on")
-  SendNoEcho("tags roomdescs on")
-  SendNoEcho("tags roomobjs on")
-  EnableTriggerGroup("tags_save", true)
-  SendNoEcho("tags")
+  Note("Plugin NPC Info enabled.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
+  Note("To Do.  Add NPC moving in and out of room.  Shorten NPC flags.")
+--  tag_list = {}
+--  SendNoEcho("tags")
 end
 
 function OnPluginInstall()
-  Note("Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
-  tag_list = {}
+  Note("Plugin NPC Info installed.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
   SendNoEcho("tags roomchars on")
   SendNoEcho("tags roomnames on")
   SendNoEcho("tags roomdescs on")
   SendNoEcho("tags roomobjs on")
-  EnableTriggerGroup("tags_save", true)
-  SendNoEcho("tags")
+end
+
+
+function OnPluginClose()
+  Note("Plugin NPC Info closed.")
+   OnPluginDisable()
+end
+
+function OnPluginDisable ()
+  Note("Plugin NPC Info disabled.")
 end
 
 function window_show()
@@ -267,7 +263,7 @@ end
 </trigger>
 
 
-<!-- On Kill Trigger Group kill_look -->
+<!-- On Kill or Move Trigger Group kill_look -->
 
 <trigger
   name="kill_room_title"
@@ -298,9 +294,9 @@ end
 </trigger>
 
 <trigger 
-  match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON)$"
+  match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON|Tag option roomnames turned ON)$"
   name="squelch_tags"
-  enabled="n" 
+  enabled="y" 
   regexp="y" 
   sequence="100" 
   omit_from_output="y" 
@@ -363,68 +359,88 @@ end
   omit_from_output="n" 
   > 
  </trigger>
-
-
-<!-- Tag Logging in Development -->
-
-<trigger 
-  match="*"
-  group="tags_save"
-  enabled="n" 
+ 
+ <trigger 
+  match="* arrives from the *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
   regexp="n" 
-  sequence="100" 
-  omit_from_output="y" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
   > 
-</trigger>
-
-<trigger match="NOTE: GMCP session tags option is *"
-  script="tags_end"
-  enabled="n" 
-  group="tags_save"
+ </trigger>
+ 
+  <trigger 
+  match="* in from the *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
   regexp="n" 
-  sequence="50" 
-  omit_from_output="y" 
-  send_to="12" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
   > 
-</trigger>
-
+ </trigger>
+ 
+   <trigger 
+  match="* leaves *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
+  regexp="n" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
+  > 
+ </trigger>
+ 
+ <trigger 
+  match="* moves *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
+  regexp="n" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
+  > 
+ </trigger>
+ 
+ <trigger 
+  match="* wanders *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
+  regexp="n" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
+  > 
+ </trigger>
+ 
 <trigger 
-  match="^EXITS         Display tags around autoexits: {exits}                  (?P<tag_status>.*)$"
-  script="save_tag_state" 
-  group="tags_save"
-  enabled="n" 
-  regexp="y" 
-  sequence="75" 
-  omit_from_output="y" 
-  send_to="12" 
-  >
-</trigger>
-
-<trigger 
-  match="^ROOMDESCS     Display tags around descs {rdesc}                       (?P<tag_status>.*)$"
-  script="save_tag_state" 
-  enabled="n" 
-  regexp="y"
-  group="tags_save" 
-  sequence="75" 
-  omit_from_output="y" 
-  send_to="12" 
-  >
-</trigger>
-
-<trigger 
-  match="^ROOMCHARS     Display tags around characters in a room.               (?P<tag_status>.*)$"
-  script="save_tag_state" 
-  group="tags_save"
-  enabled="n" 
-  regexp="y" 
-  sequence="75" 
-  omit_from_output="y" 
-  send_to="12" 
-  >
-</trigger>
+  match="* marches *."
+  script="trigger_npc_move" 
+  group="move_group"
+  ignore_case="y" 
+  enabled="y" 
+  regexp="n" 
+  sequence="1" 
+  keep_evaluating="y" 
+  omit_from_output="n" 
+  > 
+ </trigger>
 
 </triggers>
+
+
 
 <aliases>
 
