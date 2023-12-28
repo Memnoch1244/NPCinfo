@@ -209,6 +209,10 @@ end
     script="trigger_receive_xp"   ignore_case="y"   enabled="y"   regexp="y"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
+<trigger match="That was a pointless no-experience kill!"
+    script="trigger_receive_xp"   ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
+</trigger>
+
 <trigger match="{rname}*"
     script="squelch_info"  name="kill_room_title"  group="kill_look"  enabled="n"  keep_evaluating="y"  regexp="n"  omit_from_output="y"  send_to="12"  sequence="50"  >
 </trigger>
@@ -246,6 +250,10 @@ end
 
 <trigger match="^(.*?) (waddles|rambles|moseys|ambles|bounds|flutters|arrives|appears) (.*?)\.$"
     script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+</trigger>
+
+<trigger match="Your journey was broken by the need to defend yourself."
+    script="trigger_npc_move"   ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 
