@@ -199,7 +199,7 @@ end
 </trigger>
 
 <trigger match="^(?P<char_name>.+)$"
-    script="room_chars"   name="room_chars_trigger"  enabled="n"   regexp="y"   omit_from_output="n"   send_to="12"   sequence="50"   > 
+    script="room_chars"   name="room_chars_trigger"  enabled="n"   regexp="y"   omit_from_output="n"   send_to="12"   sequence="1"   > 
 </trigger>
 
 
@@ -241,15 +241,15 @@ end
 <!-- Generic Movement Triggers -->
  
 <trigger match="^(.*?) (leaves|moves|wanders|marches|flits|sloshes|slinks|crashes) (.*?)\.$"
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="^(.*?) (pads|canters|flies|hops|strolls|trudges|charges|advances|dawdles) (.*?)\.$"
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="^(.*?) (waddles|rambles|moseys|ambles|bounds|flutters|arrives|appears) (.*?)\.$"
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="y"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="Your journey was broken by the need to defend yourself."
@@ -260,38 +260,38 @@ end
 <!-- Kobold Siege Camp Custom Movement Triggers -->
 
 <trigger match="* comes charging *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* has joined in the siege."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* continues advancing *."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* is ready for some action."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* has joined in the siege."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* already charging the castle."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 <trigger match="* joins the fray."
-    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   sequence="1"   keep_evaluating="y"   omit_from_output="n"   > 
+    script="trigger_npc_move"   group="move_group"  ignore_case="y"   enabled="y"   regexp="n"   keep_evaluating="y"   omit_from_output="n"   sequence="1"   > 
 </trigger>
 
 
 <!-- Other Triggers -->
 
 <trigger match="^(Tag option roomdescs turned ON|Tag option exits turned ON|Tag option roomobjs turned ON|Tag option roomnames turned ON)$"
-    name="squelch_tags"  enabled="y"   regexp="y"   sequence="100"   omit_from_output="y"   > 
+    name="squelch_tags"  enabled="y"   regexp="y"   omit_from_output="y"   sequence="100"   > 
 </trigger>
 
 </triggers>
@@ -302,11 +302,11 @@ end
 <aliases>
 
 <alias match="^npcshow$"
-    script="window_show"  regexp="y"  enabled="y"  sequence="100"  ignore_case="y"  send_to="12"  >
+    script="window_show"  regexp="y"  enabled="y"  ignore_case="y"  send_to="12"  sequence="100"  >
 </alias>
 
 <alias match="^npchide$"
-    script="window_hide"  regexp="y"  enabled="y"  sequence="100"  ignore_case="y"  send_to="12"  >
+    script="window_hide"  regexp="y"  enabled="y"  ignore_case="y"  send_to="12"  sequence="100"  >
 </alias>
 
 </aliases>
