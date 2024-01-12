@@ -69,13 +69,15 @@ function SetTitle(name, line, wildcards, styles)
       ColourTell (RGBColourToName(v.textcolour), 
                   v.backcolour, 
                   v.text)
-      end -- for each style run
+  end -- for each style run
+--  Note("SetTitle")
 end
 
 function chars_start()
   mob_count_here = 0
   line_styles = {}
   EnableTrigger("room_chars_trigger", true)
+--  Note("chars_start")
 end
 
 function room_chars(name, line, wildcards, styles)
@@ -83,6 +85,7 @@ function room_chars(name, line, wildcards, styles)
     mob_count_here = mob_count_here + 1
     table.insert(line_styles,styles)
   end
+--  Note("room_chars")
 end
 
 function chars_end(name, line, wildcards, styles)
@@ -93,6 +96,7 @@ function chars_end(name, line, wildcards, styles)
   EnableTrigger("room_chars_trigger", false)
   EnableTriggerGroup("refresh_mobs", false)
   EnableTriggerGroup("move_group", true)
+--  Note("chars_end")
 end
 
 
@@ -104,6 +108,7 @@ function trigger_npc_move()
   EnableTriggerGroup("look_room", false)
   EnableTriggerGroup("move_group", false)
   SendNoEcho("look")
+--  Note("trigger_npc_move")
 end
 
 function trigger_receive_xp()
@@ -112,12 +117,14 @@ function trigger_receive_xp()
   EnableTriggerGroup("look_room", false)
   EnableTriggerGroup("move_group", false)
   SendNoEcho("look")
+--  Note("trigger_receive_xp")
 end
 
 function kill_start()
   mob_count_here = 0
   line_styles = {}
   EnableTrigger("kill_chars_trigger", true)
+--  Note("kill_start")
 end
 
 function kill_chars(name, line, wildcards, styles)
@@ -125,6 +132,7 @@ function kill_chars(name, line, wildcards, styles)
     mob_count_here = mob_count_here + 1
     table.insert(line_styles,styles)
   end
+--  Note("kill_chars")
 end
 
 function kill_end(name, line, wildcards, styles)
@@ -136,14 +144,17 @@ function kill_end(name, line, wildcards, styles)
   EnableTriggerGroup("look_room", true)
   EnableTriggerGroup("kill_look", false)
   EnableTriggerGroup("move_group", true)
+--  Note("kill_end")
 end
 
 function squelch_info(name, line, wildcards, styles)
   EnableTrigger("squelch_look", true)
+--  Note("squelch_info")
 end
 
 function stop_squelch(name, line, wildcards, styles)
   EnableTrigger("squelch_look", false)
+--  Note("stop_squelch")
 end
 
 <!-- Other Functions -->
@@ -195,7 +206,7 @@ end
 </trigger>
 
 <trigger match="*{/roomchars}*"
-    script="chars_end"  group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="50"   > 
+    script="chars_end"  group="look_room"  enabled="y"   regexp="n"   omit_from_output="y"   send_to="12"   sequence="1"   > 
 </trigger>
 
 <trigger match="^(?P<char_name>.+)$"
