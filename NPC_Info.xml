@@ -62,15 +62,27 @@ my_window = ThemedTextWindow(
 function SetTitle(name, line, wildcards, styles)
   EnableTriggerGroup("move_group", false)
   title_styles = {styles}
-  table.remove(title_styles[1], 1)
-  my_window:dress_window(title_styles)
+ 
 --  tprint(title_styles)
-  for _, v in ipairs (styles) do
+
+  if #title_styles[1] > 1 then
+    table.remove(title_styles[1], 1)
+    my_window:dress_window(title_styles)
+    for _, v in ipairs (styles) do
       ColourTell (RGBColourToName(v.textcolour), 
                   v.backcolour, 
                   v.text)
-  end -- for each style run
---  Note("SetTitle")
+    end -- for each style run
+  else
+    my_window:dress_window(string.sub(title_styles[1][1].text,8))
+    for _, v in ipairs (title_styles[1]) do
+      ColourTell (RGBColourToName(v.textcolour), 
+                  v.backcolour, 
+                  string.sub(v.text,8))
+    end -- for each style run
+
+  end  -- if
+
 end
 
 function chars_start()
