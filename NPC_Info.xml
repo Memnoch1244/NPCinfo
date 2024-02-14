@@ -96,10 +96,12 @@ end
 
 function room_chars(name, line, wildcards, styles)
   if not string.find(wildcards.char_name, "(Player)", 1, true) then
-    mob_count_here = mob_count_here + 1
-    table.insert(line_styles,styles)
+    if not string.find(wildcards.char_name, "(P)", 1, true) then
+      mob_count_here = mob_count_here + 1
+      table.insert(line_styles,styles)
+	end
   end
---  Note("room_chars")
+  ColourNote("red","blue","Logging Room NPCs")
 end
 
 function chars_end(name, line, wildcards, styles)
@@ -110,7 +112,7 @@ function chars_end(name, line, wildcards, styles)
   EnableTrigger("room_chars_trigger", false)
   EnableTriggerGroup("refresh_mobs", false)
   EnableTriggerGroup("move_group", true)
---  Note("chars_end")
+  ColourNote("red","blue", "Ended Logging Room NPCs")
 end
 
 
@@ -150,8 +152,10 @@ end
 
 function kill_chars(name, line, wildcards, styles)
   if not string.find(wildcards.char_name, "(Player)", 1, true) then
-    mob_count_here = mob_count_here + 1
-    table.insert(line_styles,styles)
+    if not string.find(wildcards.char_name, "(P)", 1, true) then
+      mob_count_here = mob_count_here + 1
+      table.insert(line_styles,styles)
+	end
   end
 --  Note("kill_chars")
 end
