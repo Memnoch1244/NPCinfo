@@ -23,11 +23,13 @@
 
 <script>
 <![CDATA[
-
+require "gmcphelper"
 require "themed_miniwindows"
 require "tprint"
 dofile(GetInfo(60).."aardwolf_colors.lua")
 
+local gmcp_state = 1
+local char_state = {3, 4, 8, 11, 12}
 
 my_window = ThemedTextWindow(
    GetPluginID(),  -- string, required, a unique identifier for this window
@@ -119,8 +121,11 @@ function trigger_npc_move()
   EnableTriggerGroup("kill_look", true)
   EnableTriggerGroup("look_room", false)
   EnableTriggerGroup("move_group", false)
-  SendNoEcho("look")
---  Note("trigger_npc_move")
+  for i = 1, #char_state do
+    if tonumber(gmcp_state) == tonumber(char_state[i]) then
+	  SendNoEcho("look")
+	end
+  end
 end
 
 function trigger_receive_xp()
@@ -128,7 +133,11 @@ function trigger_receive_xp()
   EnableTriggerGroup("kill_look", true)
   EnableTriggerGroup("look_room", false)
   EnableTriggerGroup("move_group", false)
-  SendNoEcho("look")
+  for i = 1, #char_state do
+    if tonumber(gmcp_state) == tonumber(char_state[i]) then
+	  SendNoEcho("look")
+	end
+  end
 --  Note("trigger_receive_xp")
 end
 
@@ -171,13 +180,26 @@ end
 
 <!-- Other Functions -->
 
+function OnPluginBroadcast(msg, id, name, text)
+
+  -- check for broadcast from GMCP helper
+  if (id == '3e7dedbe37e44942dd46d264') then
+    -- check for level change for comparison to GQ level range
+    if (text=="char.status") then
+      gmcp_state = gmcp("char.status.state")
+    end  -- char status
+  end  -- plugin id check
+
+end  -- function
+
 function OnPluginEnable()
-  Note("Plugin NPC Info enabled.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
-  Note("To Do.  Shorten NPC flags.")
+  OnPluginInstall()
 end
 
 function OnPluginInstall()
-  Note("Plugin NPC Info installed.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
+  Note("Plugin NPC Info loaded.  Type \"npcshow\" or \"npchide\" to toggle the NPC Info miniwindow.")
+  SendNoEcho("protocols gmcp sendchar")
+
   SendNoEcho("tags roomchars on")
   SendNoEcho("tags roomnames on")
   SendNoEcho("tags roomdescs on")
