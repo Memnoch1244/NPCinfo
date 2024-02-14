@@ -91,7 +91,7 @@ function chars_start()
   mob_count_here = 0
   line_styles = {}
   EnableTrigger("room_chars_trigger", true)
---  Note("chars_start")
+  ColourNote("red","blue","Trigger chars_start activated")
 end
 
 function room_chars(name, line, wildcards, styles)
