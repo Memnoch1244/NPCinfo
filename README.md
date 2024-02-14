@@ -7,6 +7,8 @@ Note:  You must be able to see the NPC moving for the listen to update.  It will
 
 Use "npcshow" or "npchide" to toggle the miniwindow.
 
+Note: Potentially incompatible with Aardwolf Consider Miniwin from Athlau.
+
 Installation
 =====
 Install by downloading the zip file and unzipping the contents to your world/plugins folder in your MUSHclient directory.
